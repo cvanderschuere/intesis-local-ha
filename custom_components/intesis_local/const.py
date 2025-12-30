@@ -94,10 +94,11 @@ VANE_HORIZONTAL_MAP: dict[int, str] = {
 VANE_HORIZONTAL_TO_DEVICE: dict[str, int] = {v: k for k, v in VANE_HORIZONTAL_MAP.items()}
 
 # Preset modes (UID 12)
+# Using "eco" instead of "quiet" for Google Assistant compatibility
 PRESET_MODE_MAP: dict[int, str] = {
     0: "none",
-    1: "quiet",
-    2: "powerful",
+    1: "eco",  # Quiet mode - maps to Google Assistant "eco"
+    2: "boost",  # Powerful mode
 }
 
 PRESET_MODE_TO_DEVICE: dict[str, int] = {v: k for k, v in PRESET_MODE_MAP.items()}

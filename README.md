@@ -9,6 +9,7 @@ Local control for Intesis WiFi AC adapters (FJ-AC-WIFI-1B, MH-AC-WIFI-1, etc.) w
 ## Features
 
 - **100% Local Control**: Direct HTTP communication with your Intesis adapter - no cloud required
+- **Google Home Compatible**: Works with Google Assistant via Nabu Casa / Home Assistant Cloud
 - **Full Climate Support**: Temperature, HVAC modes, fan speeds, swing modes, presets
 - **Optimistic Updates**: Instant UI feedback with automatic device verification
 - **Multiple Sensors**: Current temperature, WiFi signal strength, connection status
@@ -74,7 +75,7 @@ Go to **Settings** → **Devices & Services** → **Intesis Local** → **Config
 | HVAC | auto, cool, heat, dry, fan_only, off |
 | Fan | auto, low, medium-low, medium, medium-high, high, highest |
 | Swing | positions 1-5, swing |
-| Preset | none, quiet, powerful |
+| Preset | none, eco (quiet), boost (powerful) |
 
 ### Sensors
 | Entity | Description | Default |
@@ -90,6 +91,25 @@ Go to **Settings** → **Devices & Services** → **Intesis Local** → **Config
 | Error | Device error status | Enabled |
 | WiFi Connection | WiFi link status | Disabled |
 | Cloud Connection | Cloud server connection | Disabled |
+
+## Google Home / Google Assistant
+
+This integration works with Google Assistant via [Nabu Casa](https://www.nabucasa.com/) Home Assistant Cloud.
+
+### Supported Voice Commands
+
+- "Hey Google, set the AC to 22 degrees"
+- "Hey Google, set the AC to cooling mode"
+- "Hey Google, turn off the AC"
+- "Hey Google, what's the temperature of the AC?"
+- "Hey Google, set the AC to eco mode"
+
+### Setup
+
+1. Subscribe to [Nabu Casa](https://www.nabucasa.com/)
+2. Enable Google Assistant in **Settings** → **Home Assistant Cloud** → **Google Assistant**
+3. Expose your Intesis climate entity in the **Expose** tab
+4. Link your Home Assistant in the Google Home app
 
 ## Troubleshooting
 

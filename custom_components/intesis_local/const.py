@@ -44,12 +44,13 @@ CMD_GET_DP_VALUE = "getdatapointvalue"
 CMD_SET_DP_VALUE = "setdatapointvalue"
 
 # HVAC Mode mappings (device value -> HA mode)
+# Based on pyintesishome: auto=0, heat=1, dry=2, fan=3, cool=4
 HVAC_MODE_MAP: dict[int, HVACMode] = {
     0: HVACMode.AUTO,
-    1: HVACMode.COOL,
-    2: HVACMode.HEAT,
-    3: HVACMode.DRY,
-    4: HVACMode.FAN_ONLY,
+    1: HVACMode.HEAT,
+    2: HVACMode.DRY,
+    3: HVACMode.FAN_ONLY,
+    4: HVACMode.COOL,
 }
 
 # Reverse mapping (HA mode -> device value)

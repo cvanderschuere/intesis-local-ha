@@ -10,7 +10,7 @@ Local control for Intesis WiFi AC adapters (FJ-AC-WIFI-1B, MH-AC-WIFI-1, etc.) w
 
 - **100% Local Control**: Direct HTTP communication with your Intesis adapter - no cloud required
 - **Google Home Compatible**: Works with Google Assistant via Nabu Casa / Home Assistant Cloud
-- **Full Climate Support**: Temperature, HVAC modes, fan speeds, swing modes, presets
+- **Full Climate Support**: Temperature, HVAC modes, fan speeds, swing modes
 - **Optimistic Updates**: Instant UI feedback with automatic device verification
 - **Multiple Sensors**: Current temperature, WiFi signal strength, connection status
 - **Options Flow**: Configure polling interval and temperature step without reinstalling
@@ -75,7 +75,6 @@ Go to **Settings** → **Devices & Services** → **Intesis Local** → **Config
 | HVAC | auto, cool, heat, dry, fan_only, off |
 | Fan | auto, low, medium-low, medium, medium-high, high, highest |
 | Swing | positions 1-5, swing |
-| Preset | none, eco (quiet), boost (powerful) |
 
 ### Sensors
 | Entity | Description | Default |
@@ -102,7 +101,6 @@ This integration works with Google Assistant via [Nabu Casa](https://www.nabucas
 - "Hey Google, set the AC to cooling mode"
 - "Hey Google, turn off the AC"
 - "Hey Google, what's the temperature of the AC?"
-- "Hey Google, set the AC to eco mode"
 
 ### Setup
 

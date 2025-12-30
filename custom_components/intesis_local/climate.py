@@ -25,15 +25,12 @@ from .const import (
     FAN_MODE_TO_DEVICE,
     HVAC_MODE_MAP,
     HVAC_MODE_TO_DEVICE,
-    PRESET_MODE_MAP,
-    PRESET_MODE_TO_DEVICE,
     UID_CURRENT_TEMP,
     UID_FAN_SPEED,
     UID_MAX_TEMP,
     UID_MIN_TEMP,
     UID_MODE,
     UID_POWER,
-    UID_QUIET_MODE,
     UID_SETPOINT,
     UID_VANE_HORIZONTAL,
     UID_VANE_VERTICAL,
@@ -82,7 +79,6 @@ class IntesisClimate(IntesisEntity, ClimateEntity):
         ClimateEntityFeature.TARGET_TEMPERATURE
         | ClimateEntityFeature.FAN_MODE
         | ClimateEntityFeature.SWING_MODE
-        | ClimateEntityFeature.PRESET_MODE
         | ClimateEntityFeature.TURN_OFF
         | ClimateEntityFeature.TURN_ON
     )
@@ -102,7 +98,6 @@ class IntesisClimate(IntesisEntity, ClimateEntity):
         self._attr_hvac_modes = [HVACMode.OFF] + list(HVAC_MODE_MAP.values())
         self._attr_fan_modes = list(FAN_MODE_MAP.values())
         self._attr_swing_modes = list(VANE_VERTICAL_MAP.values())
-        self._attr_preset_modes = list(PRESET_MODE_MAP.values())
 
         # Set temperature step from options
         self._attr_target_temperature_step = entry.options.get(
@@ -185,7 +180,12 @@ class IntesisClimate(IntesisEntity, ClimateEntity):
             return pending
 
         temp = self.coordinator.get_value(UID_SETPOINT)
-        return temp / 10 if temp is not None else None
+        if temp is None:
+            return None
+        # Sentinel 32768 (0x8000) means "not set", also reject unreasonable values
+        if temp == 32768 or temp > 500 or temp < 0:
+            return None
+        return temp / 10
 
     @property
     def hvac_mode(self) -> HVACMode:
@@ -222,15 +222,6 @@ class IntesisClimate(IntesisEntity, ClimateEntity):
         vane = self.coordinator.get_value(UID_VANE_VERTICAL, 0)
         return VANE_VERTICAL_MAP.get(vane)
 
-    @property
-    def preset_mode(self) -> str | None:
-        """Return the current preset mode."""
-        pending = self._get_pending("preset_mode")
-        if pending is not None:
-            return pending
-
-        preset = self.coordinator.get_value(UID_QUIET_MODE, 0)
-        return PRESET_MODE_MAP.get(preset)
 
     @callback
     def _handle_coordinator_update(self) -> None:
@@ -240,7 +231,6 @@ class IntesisClimate(IntesisEntity, ClimateEntity):
         self._check_pending_confirmed("target_temp", UID_SETPOINT)
         self._check_pending_confirmed("fan_mode", UID_FAN_SPEED)
         self._check_pending_confirmed("swing_mode", UID_VANE_VERTICAL)
-        self._check_pending_confirmed("preset_mode", UID_QUIET_MODE)
 
         # HVAC mode is special - check both power and mode
         if "hvac_mode" in self._pending:
@@ -316,14 +306,6 @@ class IntesisClimate(IntesisEntity, ClimateEntity):
         self.async_write_ha_state()
 
         await self._async_send_command(UID_VANE_VERTICAL, device_value)
-
-    async def async_set_preset_mode(self, preset_mode: str) -> None:
-        """Set new preset mode."""
-        device_value = PRESET_MODE_TO_DEVICE.get(preset_mode, 0)
-        self._set_pending("preset_mode", preset_mode, device_value)
-        self.async_write_ha_state()
-
-        await self._async_send_command(UID_QUIET_MODE, device_value)
 
     async def async_turn_on(self) -> None:
         """Turn on the AC."""

@@ -1,0 +1,64 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Intesis Device",
+        "description": "Enter the connection details for your Intesis WiFi adapter.",
+        "data": {
+          "host": "Host",
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to device",
+      "invalid_auth": "Invalid username or password",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Intesis Local Options",
+        "data": {
+          "scan_interval": "Update interval",
+          "temp_step": "Temperature step"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_temperature": {
+        "name": "Current temperature"
+      },
+      "wifi_signal": {
+        "name": "WiFi signal"
+      },
+      "min_temp_limit": {
+        "name": "Minimum temperature limit"
+      },
+      "max_temp_limit": {
+        "name": "Maximum temperature limit"
+      }
+    },
+    "binary_sensor": {
+      "ac_connection": {
+        "name": "AC connection"
+      },
+      "wifi_connection": {
+        "name": "WiFi connection"
+      },
+      "cloud_connection": {
+        "name": "Cloud connection"
+      },
+      "error": {
+        "name": "Error"
+      }
+    }
+  }
+}

@@ -1,24 +1,32 @@
 # Intesis Local - Home Assistant Integration
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/v/release/cvanderschuere/intesis-local-ha)](https://github.com/cvanderschuere/intesis-local-ha/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Local control for Intesis WiFi AC adapters (FJ-AC-WIFI-1B, MH-AC-WIFI-1, etc.) without cloud dependency.
 
 ## Features
 
-- **Local Control**: Direct communication with your Intesis adapter - no cloud required
+- **100% Local Control**: Direct HTTP communication with your Intesis adapter - no cloud required
 - **Full Climate Support**: Temperature, HVAC modes, fan speeds, swing modes, presets
-- **Optimistic Updates**: Instant UI feedback with device verification
+- **Optimistic Updates**: Instant UI feedback with automatic device verification
 - **Multiple Sensors**: Current temperature, WiFi signal strength, connection status
 - **Options Flow**: Configure polling interval and temperature step without reinstalling
-- **Diagnostics**: Download debug information for troubleshooting
+- **Diagnostics**: One-click debug information download for troubleshooting
+- **Modern HA APIs**: Built for Home Assistant 2024.1+
 
 ## Supported Devices
 
-- FJ-AC-WIFI-1B (Fujitsu)
+Tested with:
+- **FJ-AC-WIFI-1B** (Fujitsu)
+
+Should also work with:
 - MH-AC-WIFI-1 (Mitsubishi Heavy)
 - DK-RC-WIFI-1B (Daikin)
-- Other Intesis local HTTP API compatible devices
+- Other Intesis devices using the local HTTP API on port 80
+
+> **Note**: This integration does NOT support IntesisBox (WMP protocol) or cloud-only devices.
 
 ## Installation
 
@@ -26,14 +34,16 @@ Local control for Intesis WiFi AC adapters (FJ-AC-WIFI-1B, MH-AC-WIFI-1, etc.) w
 
 1. Open HACS in Home Assistant
 2. Go to **Integrations** → **⋮** (menu) → **Custom repositories**
-3. Add `https://github.com/cvanderschuere/intesis-local-ha` with category **Integration**
-4. Click **Install**
+3. Add:
+   - Repository: `cvanderschuere/intesis-local-ha`
+   - Category: **Integration**
+4. Find "Intesis Local" and click **Download**
 5. Restart Home Assistant
 
 ### Manual
 
-1. Download this repository
-2. Copy `custom_components/intesis_local` to your Home Assistant's `custom_components` folder
+1. Download the [latest release](https://github.com/cvanderschuere/intesis-local-ha/releases)
+2. Extract and copy `custom_components/intesis_local` to your Home Assistant's `custom_components` folder
 3. Restart Home Assistant
 
 ## Configuration
@@ -42,56 +52,82 @@ Local control for Intesis WiFi AC adapters (FJ-AC-WIFI-1B, MH-AC-WIFI-1, etc.) w
 2. Search for "Intesis Local"
 3. Enter your device details:
    - **Host**: IP address of your Intesis adapter (e.g., `192.168.1.100`)
-   - **Username**: Usually `admin`
-   - **Password**: Usually `admin`
+   - **Username**: `admin` (default)
+   - **Password**: `admin` (default)
 
 ## Options
 
 After installation, you can configure:
 
-- **Update interval**: 10s, 30s (default), or 60s
-- **Temperature step**: 0.5°C (default) or 1.0°C
+| Option | Values | Default |
+|--------|--------|---------|
+| Update interval | 10s, 30s, 60s | 30s |
+| Temperature step | 0.5°C, 1.0°C | 0.5°C |
 
 Go to **Settings** → **Devices & Services** → **Intesis Local** → **Configure**
 
 ## Entities
 
 ### Climate
-- Full HVAC control (auto, cool, heat, dry, fan_only, off)
-- Fan modes (auto, low, medium-low, medium, medium-high, high, highest)
-- Swing modes (positions 1-5, swing)
-- Preset modes (none, quiet, powerful)
+| Feature | Modes |
+|---------|-------|
+| HVAC | auto, cool, heat, dry, fan_only, off |
+| Fan | auto, low, medium-low, medium, medium-high, high, highest |
+| Swing | positions 1-5, swing |
+| Preset | none, quiet, powerful |
 
 ### Sensors
-- Current Temperature
-- WiFi Signal Strength (disabled by default)
-- Min/Max Temperature Limits (disabled by default)
+| Entity | Description | Default |
+|--------|-------------|---------|
+| Current Temperature | Room temperature reading | Enabled |
+| WiFi Signal | Signal strength in dBm | Disabled |
+| Min/Max Temp Limits | Device temperature limits | Disabled |
 
 ### Binary Sensors
-- AC Connection Status
-- WiFi Connection (disabled by default)
-- Cloud Connection (disabled by default)
-- Error Status
+| Entity | Description | Default |
+|--------|-------------|---------|
+| AC Connection | Communication with indoor unit | Enabled |
+| Error | Device error status | Enabled |
+| WiFi Connection | WiFi link status | Disabled |
+| Cloud Connection | Cloud server connection | Disabled |
 
 ## Troubleshooting
 
 ### Cannot connect to device
-- Verify the IP address is correct
-- Ensure the device is on the same network
-- Check that port 80 is accessible
-- Try accessing `http://<device-ip>/` in your browser
 
-### Temperature changes not reflecting
-This integration uses optimistic updates - the UI updates immediately, then verifies with the device after 2 seconds. If the device reports a different value, the UI will update.
+1. Verify the IP address: `ping <device-ip>`
+2. Check port 80 is open: `curl http://<device-ip>/api.cgi -d '{"command":"getinfo"}'`
+3. Ensure device is on the same network/VLAN as Home Assistant
+4. Try accessing `http://<device-ip>/` in your browser
+
+### Temperature changes not reflecting immediately
+
+This integration uses **optimistic updates** for better UX:
+1. UI updates instantly when you change a setting
+2. Device is polled after 2 seconds to verify
+3. If the device reports a different value, UI corrects itself
 
 ### Download Diagnostics
-Go to **Settings** → **Devices & Services** → **Intesis Local** → **⋮** → **Download diagnostics**
+
+For bug reports, download diagnostics:
+**Settings** → **Devices & Services** → **Intesis Local** → **⋮** → **Download diagnostics**
+
+## API Reference
+
+This integration communicates via HTTP POST to `/api.cgi`:
+
+| Command | Description |
+|---------|-------------|
+| `getinfo` | Device info (no auth required) |
+| `login` | Authenticate and get session |
+| `getdatapointvalue` | Read all values |
+| `setdatapointvalue` | Set a value |
 
 ## License
 
-MIT License - See LICENSE file for details.
+MIT License - See [LICENSE](LICENSE) file for details.
 
 ## Credits
 
-- Based on research of the Intesis local HTTP API
+- Built with research from the Intesis local HTTP API
 - Inspired by [hass-intesishome](https://github.com/jnimmo/hass-intesishome)
